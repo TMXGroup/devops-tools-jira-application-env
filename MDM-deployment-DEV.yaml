@@ -116,12 +116,21 @@ Resources:
   VPC:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/vpc.yaml"
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/3-tier-vpc.yml"
       Parameters:
         Name: !Ref AWS::StackName
-        VpcCIDR: 10.215.0.0/16
-        Subnet1CIDR: 10.215.10.0/24
-        Subnet2CIDR: 10.215.20.0/24
+        vpcCidr: 10.223.42.0/24
+        publicSubnet0Cidr: 10.223.42.0/26
+        publicSubnet1Cidr: 10.223.42.64/26
+        hybridSubnet0Cidr: 10.223.42.128/27
+        hybridSubnet1Cidr: 10.223.42.160/27
+        privateSubnet0Cidr: 10.223.42.192/27
+        privateSubnet1Cidr: 10.223.42.224/27
+        Department: "Depa"
+        Project: "Project pilot"
+        Environment: "Development"
+        Billing: "Bill101"
+        Owner: "Glenn Hallihan"
 
   Service:
     Type: AWS::CloudFormation::Stack
@@ -137,7 +146,7 @@ Resources:
 
 Outputs:
   ServiceUrl:
-    Description: The sample service that is being continuously deployed.
+    Description: The MDM service of Development environment that is being continuously deployed.
     Value: !GetAtt LoadBalancer.Outputs.ServiceUrl
 
   PipelineUrl:

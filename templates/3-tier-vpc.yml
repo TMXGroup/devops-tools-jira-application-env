@@ -1,0 +1,620 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Standardized VPC deployment
+
+Parameters:
+  vpcCidr:
+    Type: String
+    Description: "CIDR Blocks are provisioned/checked out from the VPC Subnetting Patterns document"
+  publicSubnet0Cidr:
+    Type: String
+    Description: "Internet facing/web zone"
+  publicSubnet1Cidr:
+    Type: String
+    Description: "Internet facing/web zone"
+  hybridSubnet0Cidr:
+    Type: String
+    Description: "Internet accessible application zone"
+  hybridSubnet1Cidr:
+    Type: String
+    Description: "Internet accessible application zone"
+  privateSubnet0Cidr:
+    Type: String
+    Description: "Secure/database zone. No access to the Internet"
+  privateSubnet1Cidr:
+    Type: String
+    Description: "Secure/database zone. No access to the Internet"
+  Department:
+    Type: String
+  Project:
+    Type: String
+  Environment:
+    Type: String
+    Description: "Development/QA/Pre-Prod/Production etc"
+  Billing:
+    Type: String
+  Owner:
+    Type: String
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Label:
+            default: "VPC Network Configuration"
+        Parameters:
+            - vpcCidr
+            - publicSubnet0Cidr
+            - publicSubnet1Cidr
+            - hybridSubnet0Cidr
+            - hybridSubnet1Cidr
+            - privateSubnet0Cidr
+            - privateSubnet1Cidr
+      -
+        Label:
+            default: "TMX Tags"
+        Parameters:
+            - Department
+            - Project
+            - Environment
+            - Billing
+            - Owner
+    ParameterLabels:
+      vpcCidr:
+          default: "Subnet block/CIDR"
+      publicSubnet0Cidr:
+          default: "Public Subnet 0"
+      publicSubnet1Cidr:
+          default: "Public Subnet 1"
+      hybridSubnet0Cidr:
+          default: "Hybrid Subnet 0"
+      hybridSubnet1Cidr:
+          default: "Hybrid Subnet 1"
+      privateSubnet0Cidr:
+          default: "Private Subnet 0"
+      privateSubnet1Cidr:
+          default: "Private Subnet 1"
+
+Resources:
+  VPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: !Ref vpcCidr
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      InstanceTenancy: "default"
+      Tags:
+        -
+          Key: "Name"
+          Value: !Join ["-",[!Ref Environment, !Ref "AWS::Region", "vpc"]]
+        -
+          Key: "Project"
+          Value: !Ref Project
+        -
+          Key: "Department"
+          Value: !Ref Department
+        -
+          Key: "Environment"
+          Value: !Ref Environment
+        -
+          Key: "Billing"
+          Value: !Ref Billing
+        -
+          Key: "Owner"
+          Value: !Ref Owner
+
+  VPCInternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        -
+          Key: "Name"
+          Value: !Join ['-',[!Ref Environment, !Ref "AWS::Region", "igw"]]
+        -
+          Key: "Project"
+          Value: !Ref Project
+        -
+          Key: "Department"
+          Value: !Ref Department
+        -
+          Key: "Environment"
+          Value: !Ref Environment
+        -
+          Key: "Billing"
+          Value: !Ref Billing
+        -
+          Key: "Owner"
+          Value: !Ref Owner
+
+  VPCAttachInternetGateway:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      InternetGatewayId: !Ref VPCInternetGateway
+      VpcId: !Ref VPC
+
+  publicSubnet0:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select [0,!GetAZs ""]
+      CidrBlock: !Ref publicSubnet0Cidr
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref VPC
+      Tags:
+        -
+          Key: "Name"
+          Value: !Join ['-',["public",!Ref Environment,!Select [0,!GetAZs "" ],"subnet"]]
+        -
+          Key: "Project"
+          Value: !Ref Project
+        -
+          Key: "Department"
+          Value: !Ref Department
+        -
+          Key: "Environment"
+          Value: !Ref Environment
+        -
+          Key: "Billing"
+          Value: !Ref Billing
+        -
+          Key: "Owner"
+          Value: !Ref Owner
+
+  publicSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select [1,!GetAZs ""]
+      CidrBlock: !Ref publicSubnet1Cidr
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref VPC
+      Tags:
+        -
+          Key: "Name"
+          Value: !Join ['-',["public",!Ref Environment,!Select [1,!GetAZs "" ],"subnet"]]
+        -
+          Key: "Project"
+          Value: !Ref Project
+        -
+          Key: "Department"
+          Value: !Ref Department
+        -
+          Key: "Environment"
+          Value: !Ref Environment
+        -
+          Key: "Billing"
+          Value: !Ref Billing
+        -
+          Key: "Owner"
+          Value: !Ref Owner
+
+  hybridSubnet0:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select [0,!GetAZs ""]
+      CidrBlock: !Ref hybridSubnet0Cidr
+      MapPublicIpOnLaunch: false
+      VpcId: !Ref VPC
+      Tags:
+        -
+          Key: "Name"
+          Value: !Join ['-',["hybrid",!Ref Environment,!Select [0,!GetAZs "" ],"subnet"]]
+        -
+          Key: "Project"
+          Value: !Ref Project
+        -
+          Key: "Department"
+          Value: !Ref Department
+        -
+          Key: "Environment"
+          Value: !Ref Environment
+        -
+          Key: "Billing"
+          Value: !Ref Billing
+        -
+          Key: "Owner"
+          Value: !Ref Owner
+
+  hybridSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select [1,!GetAZs ""]
+      CidrBlock: !Ref hybridSubnet1Cidr
+      MapPublicIpOnLaunch: false
+      VpcId: !Ref VPC
+      Tags:
+        -
+          Key: "Name"
+          Value: !Join ['-',["hybrid",!Ref Environment,!Select [1,!GetAZs "" ],"subnet"]]
+        -
+          Key: "Project"
+          Value: !Ref Project
+        -
+          Key: "Department"
+          Value: !Ref Department
+        -
+          Key: "Environment"
+          Value: !Ref Environment
+        -
+          Key: "Billing"
+          Value: !Ref Billing
+        -
+          Key: "Owner"
+          Value: !Ref Owner
+
+  privateSubnet0:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select [0,!GetAZs ""]
+      CidrBlock: !Ref privateSubnet0Cidr
+      MapPublicIpOnLaunch: false
+      VpcId: !Ref VPC
+      Tags:
+          -
+            Key: "Name"
+            Value: !Join ['-',["private",!Ref Environment,!Select [0,!GetAZs "" ],"subnet"]]
+          -
+            Key: "Project"
+            Value: !Ref Project
+          -
+            Key: "Department"
+            Value: !Ref Department
+          -
+            Key: "Environment"
+            Value: !Ref Environment
+          -
+            Key: "Billing"
+            Value: !Ref Billing
+          -
+            Key: "Owner"
+            Value: !Ref Owner
+
+  privateSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: !Select [1,!GetAZs ""]
+      CidrBlock: !Ref privateSubnet1Cidr
+      MapPublicIpOnLaunch: false
+      VpcId: !Ref VPC
+      Tags:
+        -
+          Key: "Name"
+          Value: !Join ['-',["private",!Ref Environment,!Select [1,!GetAZs "" ],"subnet"]]
+        -
+          Key: "Project"
+          Value: !Ref Project
+        -
+          Key: "Department"
+          Value: !Ref Department
+        -
+          Key: "Environment"
+          Value: !Ref Environment
+        -
+          Key: "Billing"
+          Value: !Ref Billing
+        -
+          Key: "Owner"
+          Value: !Ref Owner
+
+  publicRouteTable0:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        -
+          Key: "Name"
+          Value: !Join ['-',[!Ref Environment,!Select [0,!GetAZs "" ],"public","route-table"]]
+        -
+          Key: "Project"
+          Value: !Ref Project
+        -
+          Key: "Department"
+          Value: !Ref Department
+        -
+          Key: "Environment"
+          Value: !Ref Environment
+        -
+          Key: "Billing"
+          Value: !Ref Billing
+        -
+          Key: "Owner"
+          Value: !Ref Owner
+
+  publicRouteTable1:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        -
+          Key: "Name"
+          Value: !Join ['-',[!Ref Environment,!Select [1,!GetAZs "" ],"public","route-table"]]
+        -
+          Key: "Project"
+          Value: !Ref Project
+        -
+          Key: "Department"
+          Value: !Ref Department
+        -
+          Key: "Environment"
+          Value: !Ref Environment
+        -
+          Key: "Billing"
+          Value: !Ref Billing
+        -
+          Key: "Owner"
+          Value: !Ref Owner
+
+  hybridRouteTable0:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        -
+          Key: "Name"
+          Value: !Join ['-',[!Ref Environment,!Select [0,!GetAZs "" ],"hybrid","route-table"]]
+        -
+          Key: "Project"
+          Value: !Ref Project
+        -
+          Key: "Department"
+          Value: !Ref Department
+        -
+          Key: "Environment"
+          Value: !Ref Environment
+        -
+          Key: "Billing"
+          Value: !Ref Billing
+        -
+          Key: "Owner"
+          Value: !Ref Owner
+
+  hybridRouteTable1:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        -
+          Key: "Name"
+          Value: !Join ['-',[!Ref Environment,!Select [1,!GetAZs "" ],"hybrid","route-table"]]
+        -
+          Key: "Project"
+          Value: !Ref Project
+        -
+          Key: "Department"
+          Value: !Ref Department
+        -
+          Key: "Environment"
+          Value: !Ref Environment
+        -
+          Key: "Billing"
+          Value: !Ref Billing
+        -
+          Key: "Owner"
+          Value: !Ref Owner
+
+  privateRouteTable0:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        -
+          Key: "Name"
+          Value: !Join ['-',[!Ref Environment,!Select [0,!GetAZs "" ],"private","route-table"]]
+        -
+          Key: "Project"
+          Value: !Ref Project
+        -
+          Key: "Department"
+          Value: !Ref Department
+        -
+          Key: "Environment"
+          Value: !Ref Environment
+        -
+          Key: "Billing"
+          Value: !Ref Billing
+        -
+          Key: "Owner"
+          Value: !Ref Owner
+
+  privateRouteTable1:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        -
+          Key: "Name"
+          Value: !Join ['-',[!Ref Environment,!Select [1,!GetAZs "" ],"private","route-table"]]
+        -
+          Key: "Project"
+          Value: !Ref Project
+        -
+          Key: "Department"
+          Value: !Ref Department
+        -
+          Key: "Environment"
+          Value: !Ref Environment
+        -
+          Key: "Billing"
+          Value: !Ref Billing
+        -
+          Key: "Owner"
+          Value: !Ref Owner
+
+  publicRouteTable0Association:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref publicRouteTable0
+      SubnetId: !Ref publicSubnet0
+
+  publicRouteTable1Association:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref publicRouteTable1
+      SubnetId: !Ref publicSubnet1
+
+  hybridRouteTable0Association:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref hybridRouteTable0
+      SubnetId: !Ref hybridSubnet0
+
+  hybridRouteTable1Association:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref hybridRouteTable1
+      SubnetId: !Ref hybridSubnet1
+
+  privateRouteTable0Association:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref privateRouteTable0
+      SubnetId: !Ref privateSubnet0
+
+  privateRouteTable1Association:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref privateRouteTable1
+      SubnetId: !Ref privateSubnet1
+
+  natGatewayEIP0:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+
+  natGatewayEIP1:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+
+  natGateway0:
+    Type: 'AWS::EC2::NatGateway'
+    DependsOn: VPCAttachInternetGateway
+    Properties:
+      AllocationId:
+        !GetAtt
+        - natGatewayEIP0
+        - AllocationId
+      SubnetId: !Ref publicSubnet0
+
+  natGateway1:
+    Type: 'AWS::EC2::NatGateway'
+    DependsOn: VPCAttachInternetGateway
+    Properties:
+      AllocationId:
+        !GetAtt
+        - natGatewayEIP1
+        - AllocationId
+      SubnetId: !Ref publicSubnet1
+
+  publicRoute0:
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCInternetGateway
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref VPCInternetGateway
+      RouteTableId: !Ref publicRouteTable0
+
+  publicRoute1:
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCInternetGateway
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref VPCInternetGateway
+      RouteTableId: !Ref publicRouteTable1
+
+
+  publicRoute3:
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCInternetGateway
+    Properties:
+      DestinationCidrBlock: 142.201.0.0/24
+      GatewayId: !Ref VPCInternetGateway
+      RouteTableId: !Ref publicRouteTable0
+
+  publicRoute4:
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCInternetGateway
+    Properties:
+      DestinationCidrBlock: 142.201.0.0/24
+      GatewayId: !Ref VPCInternetGateway
+      RouteTableId: !Ref publicRouteTable1
+
+
+  publicRoute5:
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCInternetGateway
+    Properties:
+      DestinationCidrBlock: 142.201.1.0/24
+      GatewayId: !Ref VPCInternetGateway
+      RouteTableId: !Ref publicRouteTable0
+
+  publicRoute6:
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCInternetGateway
+    Properties:
+      DestinationCidrBlock: 142.201.1.0/24
+      GatewayId: !Ref VPCInternetGateway
+      RouteTableId: !Ref publicRouteTable1
+
+  publicRoute7:
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCInternetGateway
+    Properties:
+      DestinationCidrBlock: 142.201.5.0/24
+      GatewayId: !Ref VPCInternetGateway
+      RouteTableId: !Ref publicRouteTable0
+
+  publicRoute8:
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCInternetGateway
+    Properties:
+      DestinationCidrBlock: 142.201.5.0/24
+      GatewayId: !Ref VPCInternetGateway
+      RouteTableId: !Ref publicRouteTable1
+
+  publicRoute9:
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCInternetGateway
+    Properties:
+      DestinationCidrBlock: 142.201.8.0/24
+      GatewayId: !Ref VPCInternetGateway
+      RouteTableId: !Ref publicRouteTable0
+
+  publicRoute10:
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCInternetGateway
+    Properties:
+      DestinationCidrBlock: 142.201.8.0/24
+      GatewayId: !Ref VPCInternetGateway
+      RouteTableId: !Ref publicRouteTable1
+
+  hybridRoute0:
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCInternetGateway
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref natGateway0
+      RouteTableId: !Ref hybridRouteTable0
+
+  hybridRoute1:
+    Type: 'AWS::EC2::Route'
+    DependsOn: VPCInternetGateway
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref natGateway1
+      RouteTableId: !Ref hybridRouteTable1
+  
+  VpcFlowLogsLocal:
+    Type: AWS::EC2::FlowLog
+    Properties:
+      DeliverLogsPermissionArn: 
+        Fn::Join: ["", [ "arn:aws:iam::", { Ref: "AWS::AccountId" }, ":role/flowlogsRole" ]]
+      LogGroupName: VpcFlowLogs
+      ResourceId: !Ref VPC
+      ResourceType: VPC
+      TrafficType: ALL
+
+      
+Outputs:
+  Subnets:
+    Value: !Join [ ",", [ !Ref publicSubnet0, !Ref publicSubnet1 ] ]
+  VpcId:
+    Value: !Ref VPC
+    
