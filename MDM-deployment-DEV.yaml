@@ -49,7 +49,6 @@ Parameters:
     Description: >
       The S3 bucket from which to fetch the templates used by this stack.
 
-
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterLabels:
@@ -142,7 +141,6 @@ Resources:
         TargetGroup: !GetAtt LoadBalancer.Outputs.TargetGroup
         SourceSecurityGroup: !GetAtt LoadBalancer.Outputs.SecurityGroup
         Subnets: !GetAtt VPC.Outputs.Subnets
-
 
 Outputs:
   ServiceUrl:
