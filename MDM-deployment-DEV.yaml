@@ -24,8 +24,8 @@ Parameters:
 
   GitHubUser:
     Type: String
-    Default: tmx-hlin    
-    Description: Your username on GitHub.
+    Default: TMXGroup
+    Description: The GitHub username of the repository owner
 
   GitHubRepo:
     Type: String
@@ -34,7 +34,7 @@ Parameters:
 
   GitHubBranch:
     Type: String
-    Default: master
+    Default: develop
     Description: The branch of the repo to continuously deploy.
 
   GitHubToken:
