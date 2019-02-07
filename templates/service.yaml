@@ -101,9 +101,7 @@ Resources:
           Essential: true
           Memory: 256
           portMappings:
-          - hostPort: 8000
-            protocol: tcp
-            containerPort: 8000              
+          - containerPort: 8000              
           LogConfiguration:
             LogDriver: awslogs
             Options:
