@@ -29,7 +29,7 @@ Parameters:
 
   GitHubRepo:
     Type: String
-    Default: ecs-demo-php-simple-app
+    Default: hank-test
     Description: The repo name of the sample service.
 
   GitHubBranch:

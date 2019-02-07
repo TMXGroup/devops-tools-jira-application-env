@@ -98,7 +98,6 @@ Resources:
       ContainerDefinitions:
         - Name: simple-app
           Image: amazon/amazon-ecs-sample
-          EntryPoint:
           Essential: true
           Memory: 256
           portMappings:

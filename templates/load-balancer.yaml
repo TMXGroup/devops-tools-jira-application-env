@@ -27,10 +27,14 @@ Resources:
     Properties:
       GroupDescription: !Sub ${AWS::StackName}-alb
       SecurityGroupIngress:
-        - CidrIp: "0.0.0.0/0"
+        - CidrIp: "184.64.11.81/32"
           IpProtocol: "TCP"
           FromPort: 80
-          ToPort: 80
+          ToPort: 10000
+        - CidrIp: "142.201.0.0/16"
+          IpProtocol: "TCP"
+          FromPort: 80
+          ToPort: 10000          
       VpcId: !Ref VpcId
 
   LoadBalancer:
@@ -81,7 +85,6 @@ Resources:
       Actions:
         - TargetGroupArn: !Ref TargetGroup
           Type: forward
-
 
 Outputs:
   TargetGroup:
