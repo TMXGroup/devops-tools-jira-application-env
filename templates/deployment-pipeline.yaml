@@ -21,7 +21,13 @@ Parameters:
 
   Service:
     Type: String
-
+  Environment:
+    Type: String
+    Description: "Development/QA/Pre-Prod/Production etc"
+  Billing:
+    Type: String
+  Owner:
+    Type: String
 
 Resources:
   Repository:
@@ -108,7 +114,18 @@ Resources:
   ArtifactBucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: Retain
-
+    Properties:
+      Tags:
+        -
+          Key: "Environment"
+          Value: !Ref Environment
+        -
+          Key: "Billing"
+          Value: !Ref Billing
+        -
+          Key: "Owner"
+          Value: !Ref Owner
+          
   CodeBuildProject:
     Type: AWS::CodeBuild::Project
     Properties:
@@ -116,26 +133,10 @@ Resources:
         Type: CODEPIPELINE
       Source:
         Type: CODEPIPELINE
-        BuildSpec: |
-          version: 0.2
-          phases:
-            pre_build:
-              commands:
-                - $(aws ecr get-login --no-include-email)
-                - TAG="$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
-                - IMAGE_URI="${REPOSITORY_URI}:${TAG}"
-            build:
-              commands:
-                - docker build --tag "$IMAGE_URI" .
-            post_build:
-              commands:
-                - docker push "$IMAGE_URI"
-                - printf '[{"name":"simple-app","imageUri":"%s"}]' "$IMAGE_URI" > images.json
-          artifacts:
-            files: images.json
+        BuildSpec: 'buildspec.yml'
       Environment:
         ComputeType: BUILD_GENERAL1_SMALL
-        Image: aws/codebuild/docker:17.09.0
+        Image: aws/codebuild/python:3.7.1-1.7.0
         Type: LINUX_CONTAINER
         EnvironmentVariables:
           - Name: AWS_DEFAULT_REGION
@@ -144,6 +145,16 @@ Resources:
             Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${Repository}
       Name: !Ref AWS::StackName
       ServiceRole: !Ref CodeBuildServiceRole
+      Tags:
+        -
+          Key: "Environment"
+          Value: !Ref Environment
+        -
+          Key: "Billing"
+          Value: !Ref Billing
+        -
+          Key: "Owner"
+          Value: !Ref Owner      
 
   Pipeline:
     Type: AWS::CodePipeline::Pipeline

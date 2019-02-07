@@ -102,6 +102,9 @@ Resources:
         GitHubToken: !Ref GitHubToken
         GitHubRepo: !Ref GitHubRepo
         GitHubBranch: !Ref GitHubBranch
+        Environment: "MDM-DEV"
+        Billing: "Bill101"
+        Owner: "Glenn Hallihan"        
 
   LoadBalancer:
     Type: AWS::CloudFormation::Stack
@@ -117,7 +120,6 @@ Resources:
     Properties:
       TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/3-tier-vpc.yml"
       Parameters:
-        Name: !Ref AWS::StackName
         vpcCidr: 10.223.42.0/24
         publicSubnet0Cidr: 10.223.42.0/26
         publicSubnet1Cidr: 10.223.42.64/26
@@ -127,7 +129,7 @@ Resources:
         privateSubnet1Cidr: 10.223.42.224/27
         Department: "Depa"
         Project: "Project pilot"
-        Environment: "Development"
+        Environment: "MDM-DEV"
         Billing: "Bill101"
         Owner: "Glenn Hallihan"
 
