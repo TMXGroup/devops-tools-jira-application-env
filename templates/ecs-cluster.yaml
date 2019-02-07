@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-
+Description: ECS cluster with associated InstanceProfile, AutoScalingGroup, LaunchConfiguration and SecurityGroup  
 
 Parameters:
   LaunchType:

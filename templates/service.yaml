@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
-
+Description: ECS service and tasks definition, LogGroup 
 
 Parameters:
   Cluster:
@@ -69,7 +69,7 @@ Resources:
           Subnets: !Ref Subnets
       LoadBalancers:
         - ContainerName: simple-app
-          ContainerPort: 8080
+          ContainerPort: 8000
           TargetGroupArn: !Ref TargetGroup
 
   EC2Service:
@@ -104,8 +104,8 @@ Resources:
             - FOREGROUND          
           Essential: true
           Memory: 256
-          portMappings:
-          - containerPort: 8000              
+          PortMappings:
+            - ContainerPort: 8000
           LogConfiguration:
             LogDriver: awslogs
             Options:
