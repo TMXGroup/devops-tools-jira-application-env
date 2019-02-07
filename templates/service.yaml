@@ -69,7 +69,7 @@ Resources:
           Subnets: !Ref Subnets
       LoadBalancers:
         - ContainerName: simple-app
-          ContainerPort: 80
+          ContainerPort: 8080
           TargetGroupArn: !Ref TargetGroup
 
   EC2Service:
