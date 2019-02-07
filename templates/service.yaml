@@ -82,7 +82,7 @@ Resources:
       LaunchType: EC2
       LoadBalancers:
         - ContainerName: simple-app
-          ContainerPort: 80
+          ContainerPort: 8000
           TargetGroupArn: !Ref TargetGroup
 
   TaskDefinition:
