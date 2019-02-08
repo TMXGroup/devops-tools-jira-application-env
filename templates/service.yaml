@@ -68,7 +68,7 @@ Resources:
             - !Ref SourceSecurityGroup
           Subnets: !Ref Subnets
       LoadBalancers:
-        - ContainerName: simple-app
+        - ContainerName: django-app
           ContainerPort: 8000
           TargetGroupArn: !Ref TargetGroup
 
