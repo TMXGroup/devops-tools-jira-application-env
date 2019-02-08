@@ -102,6 +102,9 @@ Resources:
         GitHubToken: !Ref GitHubToken
         GitHubRepo: !Ref GitHubRepo
         GitHubBranch: !Ref GitHubBranch
+        SourceSecurityGroup: !GetAtt LoadBalancer.Outputs.SecurityGroup
+        HybridSubnets: !GetAtt VPC.Outputs.HybridSubnets
+        VpcId: !GetAtt VPC.Outputs.VpcId  
         Environment: "MDM-DEV"
         Billing: "Bill101"
         Owner: "Glenn Hallihan"        
@@ -144,6 +147,19 @@ Resources:
         SourceSecurityGroup: !GetAtt LoadBalancer.Outputs.SecurityGroup
         Subnets: !GetAtt VPC.Outputs.Subnets
 
+  PostgresRDS:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/rds-postgres.yaml"
+      Parameters:
+        SourceSecurityGroup: !GetAtt LoadBalancer.Outputs.SecurityGroup
+        Subnets: !GetAtt VPC.Outputs.PrivateSubnets
+        VpcId: !GetAtt VPC.Outputs.VpcId  
+        DBInstanceClass: 'db.t2.micro'
+        DBName: djangotest
+        DBMasterUsername: mdmdev
+        DBMasterUserPassword: djangotesting
+  
 Outputs:
   ServiceUrl:
     Description: The MDM service of Development environment that is being continuously deployed.

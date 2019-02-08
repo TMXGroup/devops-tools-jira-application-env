@@ -96,12 +96,8 @@ Resources:
       NetworkMode: !If [ Fargate, "awsvpc", "bridge" ]
       ExecutionRoleArn: !Ref TaskExecutionRole
       ContainerDefinitions:
-        - Name: simple-app
+        - Name: django-app
           Image: amazon/amazon-ecs-sample
-          EntryPoint:
-            - /usr/sbin/apache2
-            - -D
-            - FOREGROUND          
           Essential: true
           Memory: 256
           PortMappings:

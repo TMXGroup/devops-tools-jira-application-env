@@ -1,0 +1,111 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'RDS Postgres'
+
+Parameters:
+  Subnets:
+    Type: List<AWS::EC2::Subnet::Id>
+
+  VpcId:
+    Type: String
+
+  SourceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup::Id
+    
+  DBAllocatedStorage:
+    Description: 'The allocated storage size, specified in GB (ignored when DBSnapshotIdentifier is set, value used from snapshot).'
+    Type: Number
+    Default: 5
+    MinValue: 5
+    MaxValue: 16384
+  DBInstanceClass:
+    Description: 'The instance type of database server.'
+    Type: String
+    Default: 'db.t2.micro'
+  DBName:
+    Description: 'Name of the database,DBName must begin with a letter and contain only alphanumeric characters.'
+    Type: String
+    Default: ''
+  DBBackupRetentionPeriod:
+    Description: 'The number of days to keep snapshots of the database.'
+    Type: Number
+    MinValue: 0
+    MaxValue: 35
+    Default: 30
+  DBMasterUsername:
+    Description: 'The master user name for the DB instance (ignored when DBSnapshotIdentifier is set, value used from snapshot).'
+    Type: String
+    Default: master
+  DBMasterUserPassword:
+    Description: 'The master password for the DB instance (ignored when DBSnapshotIdentifier is set, value used from snapshot).'
+    Type: String
+    NoEcho: true
+    Default: ''
+  DBMultiAZ:
+    Description: 'Specifies if the database instance is deployed to multiple Availability Zones for HA.'
+    Type: String
+    Default: true
+    AllowedValues: [true, false]
+  SubDomainNameWithDot:
+    Description: 'Name that is used to create the DNS entry with trailing dot, e.g. §{SubDomainNameWithDot}§{HostedZoneName}. Leave blank for naked (or apex and bare) domain. Requires ParentZoneStack parameter!'
+    Type: String
+    Default: 'postgres.'
+  PreferredBackupWindow:
+    Description: 'The daily time range in UTC during which you want to create automated backups.'
+    Type: String
+    Default: '09:54-10:24'
+  PreferredMaintenanceWindow:
+    Description: The weekly time range (in UTC) during which system maintenance can occur.
+    Type: String
+    Default: 'sat:07:00-sat:07:30'
+
+Resources:
+  DatabaseSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: !Ref 'AWS::StackName'
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 5432
+        ToPort: 5432
+        SourceSecurityGroupId: !Ref SourceSecurityGroup
+  DBSubnetGroup:
+    Type: 'AWS::RDS::DBSubnetGroup'
+    Properties:
+      DBSubnetGroupDescription: !Ref 'AWS::StackName'
+      SubnetIds: !Ref Subnets
+  DBInstance:
+    DeletionPolicy: Snapshot # default
+    Type: 'AWS::RDS::DBInstance'
+    Properties:
+      AllocatedStorage: "100"
+      AllowMajorVersionUpgrade: false
+      AutoMinorVersionUpgrade: true
+      BackupRetentionPeriod: !Ref DBBackupRetentionPeriod
+      CopyTagsToSnapshot: true
+      DBInstanceClass: !Ref DBInstanceClass
+      DBName: !Ref DBName
+      DBInstanceIdentifier : !Ref DBName
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      Engine: postgres
+      EngineVersion: '9.6.5'
+      MasterUsername:  !Ref DBMasterUsername
+      MasterUserPassword:  !Ref DBMasterUserPassword
+      MultiAZ: !Ref DBMultiAZ
+      PreferredBackupWindow: !Ref PreferredBackupWindow
+      PreferredMaintenanceWindow: !Ref PreferredMaintenanceWindow
+      StorageType: gp2
+      VPCSecurityGroups:
+      - !Ref DatabaseSecurityGroup
+Outputs:
+  StackName:
+    Description: 'Stack name.'
+    Value: !Sub '${AWS::StackName}'
+  InstanceName:
+    Description: 'The name of the database instance.'
+    Value: !Ref DBInstance
+    Export:
+      Name: !Sub '${AWS::StackName}-InstanceName'
+  DNSName:
+    Description: 'The connection endpoint for the database.'
+    Value: !GetAtt 'DBInstance.Endpoint.Address'

@@ -21,6 +21,16 @@ Parameters:
 
   Service:
     Type: String
+
+  HybridSubnets:
+    Type: List<AWS::EC2::Subnet::Id>
+
+  VpcId:
+    Type: String
+
+  SourceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup::Id
+    
   Environment:
     Type: String
     Description: "Development/QA/Pre-Prod/Production etc"
@@ -146,6 +156,10 @@ Resources:
             Value: !Sub ${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${Repository}
       Name: !Ref AWS::StackName
       ServiceRole: !Ref CodeBuildServiceRole
+      VpcConfig: 
+        - SecurityGroupIds: !Ref SourceSecurityGroup
+        - Subnets: !Ref HybridSubnets
+        - VpcId: !Ref VpcId
       Tags:
         -
           Key: "Environment"

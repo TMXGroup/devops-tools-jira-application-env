@@ -615,6 +615,10 @@ Resources:
 Outputs:
   Subnets:
     Value: !Join [ ",", [ !Ref publicSubnet0, !Ref publicSubnet1 ] ]
+  HybridSubnets:
+    Value: !Join [ ",", [ !Ref hybridSubnet0, !Ref hybridSubnet1 ] ]    
+  PrivateSubnets:
+    Value: !Join [ ",", [ !Ref privateSubnet0, !Ref privateSubnet1 ] ]
   VpcId:
     Value: !Ref VPC
     
