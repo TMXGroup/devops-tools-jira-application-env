@@ -81,7 +81,7 @@ Resources:
       TaskDefinition: !Ref TaskDefinition
       LaunchType: EC2
       LoadBalancers:
-        - ContainerName: simple-app
+        - ContainerName: django-app
           ContainerPort: 8000
           TargetGroupArn: !Ref TargetGroup
 
@@ -116,7 +116,7 @@ Resources:
           Essential: true
           Memory: 256
           VolumesFrom:
-            - SourceContainer: simple-app
+            - SourceContainer: django-app
           Command:
             - /bin/sh -c "while true; do /bin/date > /var/www/my-vol/date; sleep 1; done"
       Volumes:
