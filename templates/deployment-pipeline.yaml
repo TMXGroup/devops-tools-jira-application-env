@@ -159,8 +159,7 @@ Resources:
       VpcConfig: 
         SecurityGroupIds: 
           - !Ref SourceSecurityGroup
-        Subnets: 
-          - !Ref HybridSubnets
+        Subnets: !Ref HybridSubnets
         VpcId: !Ref VpcId
       Tags:
         -
