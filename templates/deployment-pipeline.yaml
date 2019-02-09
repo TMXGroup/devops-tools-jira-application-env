@@ -71,7 +71,14 @@ Resources:
                   - ec2:DescribeSecurityGroupReferences
                   - ec2:DescribeStaleSecurityGroups
                   - ec2:DescribeVpcs 
-                  - ec2:DescribeSubnets                  
+                  - ec2:DescribeSubnets
+                  - ec2:CreateNetworkInterface
+                  - ec2:DescribeDhcpOptions
+                  - ec2:DescribeNetworkInterfaces
+                  - ec2:DeleteNetworkInterface
+                  - ec2:CreateNetworkInterfacePermission
+                  - ecr:*
+                  - cloudtrail:LookupEvents                  
               - Resource: !Sub arn:aws:s3:::${ArtifactBucket}/*
                 Effect: Allow
                 Action:
@@ -126,11 +133,7 @@ Resources:
                   - codebuild:StartBuild
                   - codebuild:BatchGetBuilds
                   - iam:PassRole
-                  - ec2:DescribeSecurityGroups
-                  - ec2:DescribeSecurityGroupReferences
-                  - ec2:DescribeStaleSecurityGroups
-                  - ec2:DescribeVpcs
-                  - ec2:DescribeSubnets
+
 
   ArtifactBucket:
     Type: AWS::S3::Bucket
