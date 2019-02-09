@@ -67,6 +67,11 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                   - ecr:GetAuthorizationToken
+                  - ec2:DescribeSecurityGroups
+                  - ec2:DescribeSecurityGroupReferences
+                  - ec2:DescribeStaleSecurityGroups
+                  - ec2:DescribeVpcs 
+                  - ec2:DescribeSubnets                  
               - Resource: !Sub arn:aws:s3:::${ArtifactBucket}/*
                 Effect: Allow
                 Action:
@@ -83,6 +88,7 @@ Resources:
                   - ecr:InitiateLayerUpload
                   - ecr:UploadLayerPart
                   - ecr:CompleteLayerUpload
+                  
 
   CodePipelineServiceRole:
     Type: AWS::IAM::Role
@@ -120,6 +126,11 @@ Resources:
                   - codebuild:StartBuild
                   - codebuild:BatchGetBuilds
                   - iam:PassRole
+                  - ec2:DescribeSecurityGroups
+                  - ec2:DescribeSecurityGroupReferences
+                  - ec2:DescribeStaleSecurityGroups
+                  - ec2:DescribeVpcs
+                  - ec2:DescribeSubnets
 
   ArtifactBucket:
     Type: AWS::S3::Bucket
