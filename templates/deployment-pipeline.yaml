@@ -157,8 +157,10 @@ Resources:
       Name: !Ref AWS::StackName
       ServiceRole: !Ref CodeBuildServiceRole
       VpcConfig: 
-        SecurityGroupIds: !Ref SourceSecurityGroup
-        Subnets: !Ref HybridSubnets
+        SecurityGroupIds: 
+          - !Ref SourceSecurityGroup
+        Subnets: 
+          - !Ref HybridSubnets
         VpcId: !Ref VpcId
       Tags:
         -
