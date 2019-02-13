@@ -85,7 +85,7 @@ Resources:
       CopyTagsToSnapshot: true
       DBInstanceClass: !Ref DBInstanceClass
       DBName: !Ref DBName
-#      DBInstanceIdentifier : !Ref DBName
+      DBInstanceIdentifier : !Ref DBName
       DBSubnetGroupName: !Ref DBSubnetGroup
       Engine: postgres
       EngineVersion: '9.6.5'

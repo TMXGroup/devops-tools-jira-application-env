@@ -156,8 +156,8 @@ Resources:
         Subnets: !GetAtt VPC.Outputs.PrivateSubnets
         VpcId: !GetAtt VPC.Outputs.VpcId  
         DBInstanceClass: 'db.t2.micro'
-        DBName: djangotest
-        DBMasterUsername: mdmdev
+        DBName: mdmdev
+        DBMasterUsername: django
         DBMasterUserPassword: djangotesting
   
 Outputs:
