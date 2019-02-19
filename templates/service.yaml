@@ -91,7 +91,7 @@ Resources:
       Family: !Sub ${AWS::StackName}-simple-app
       RequiresCompatibilities:
         - !If [ Fargate, "FARGATE", "EC2" ]
-      Memory: 512
+      Memory: 3072
       Cpu: 256
       NetworkMode: !If [ Fargate, "awsvpc", "bridge" ]
       ExecutionRoleArn: !Ref TaskExecutionRole
@@ -99,7 +99,7 @@ Resources:
         - Name: django-app
           Image: amazon/amazon-ecs-sample
           Essential: true
-          Memory: 256
+          Memory: 3072
           PortMappings:
             - ContainerPort: 8000
           LogConfiguration:
