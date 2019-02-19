@@ -36,17 +36,17 @@ Resources:
           FromPort: 80
           ToPort: 10000          
       VpcId: !Ref VpcId
-  SecurityGroupIngress:
-    Type: AWS::EC2::SecurityGroupIngress
-    Properties:
-      GroupId:
-        - !Ref SecurityGroup
-      IpProtocol: tcp
-      ToPort: '65535'
-      FromPort: '0'
-      SourceSecurityGroupId:
-        - !Ref SecurityGroup
-    DependsOn: SecurityGroup
+  # SecurityGroupIngress:
+    # Type: AWS::EC2::SecurityGroupIngress
+    # Properties:
+      # GroupId:
+        # - !Ref SecurityGroup
+      # IpProtocol: tcp
+      # ToPort: '65535'
+      # FromPort: '0'
+      # SourceSecurityGroupId:
+        # - !Ref SecurityGroup
+    # DependsOn: SecurityGroup
       
   LoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
