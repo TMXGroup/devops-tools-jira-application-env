@@ -12,7 +12,7 @@ Description: >
 Parameters:
   LaunchType:
     Type: String
-    Default: EC2
+    Default: Fargate
     AllowedValues:
       - Fargate
       - EC2

@@ -92,7 +92,7 @@ Resources:
       RequiresCompatibilities:
         - !If [ Fargate, "FARGATE", "EC2" ]
       Memory: 3072
-      Cpu: 256
+      Cpu: 1024
       NetworkMode: !If [ Fargate, "awsvpc", "bridge" ]
       ExecutionRoleArn: !Ref TaskExecutionRole
       ContainerDefinitions:
