@@ -34,37 +34,38 @@ Conditions:
 
 Mappings:
   AWSRegionToAMI:
-    ap-south-1:
-      AMI: ami-00491f6f
-    eu-west-3:
-      AMI: ami-9aef59e7
-    eu-west-2:
-      AMI: ami-67cbd003
-    eu-west-1:
-      AMI: ami-1d46df64
-    ap-northeast-2:
-      AMI: ami-c212b2ac
     ap-northeast-1:
-      AMI: ami-872c4ae1
-    sa-east-1:
-      AMI: ami-af521fc3
-    ca-central-1:
-      AMI: ami-435bde27
+      AMI: ami-0d5f884dada5562c6
+    ap-northeast-2:
+      AMI: ami-0060ad36f655af38b
+    ap-south-1:
+      AMI: ami-056a07eb5b1d13734
     ap-southeast-1:
-      AMI: ami-910d72ed
+      AMI: ami-065c0bd2832a70f9d
     ap-southeast-2:
-      AMI: ami-58bb443a
+      AMI: ami-0aa8b7a8042811ddf
+    ca-central-1:
+      AMI: ami-0d50dee936e241e7e
     eu-central-1:
-      AMI: ami-509a053f
+      AMI: ami-03804565a6baf6d30
+    eu-west-1:
+      AMI: ami-0dbcd2533bc72c3f6
+    eu-west-2:
+      AMI: ami-005307409c5f6e76c
+    eu-west-3:
+      AMI: ami-024c0b7d07abc6526
+    sa-east-1:
+      AMI: ami-0078e33a9103e1e58
     us-east-1:
-      AMI: ami-28456852
+      AMI: ami-0254e5972ebcd132c
     us-east-2:
-      AMI: ami-ce1c36ab
+      AMI: ami-0a0d2004b44b9287c
+    us-gov-west-1:
+      AMI: ami-a842dcc9
     us-west-1:
-      AMI: ami-74262414
+      AMI: ami-0de5608ca20c07aa2
     us-west-2:
-      AMI: ami-decc7fa6
-
+      AMI: ami-093381d21a4fc38d1
 
 Resources:
   ECSRole:
