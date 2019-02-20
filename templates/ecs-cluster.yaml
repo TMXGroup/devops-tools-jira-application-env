@@ -45,7 +45,7 @@ Mappings:
     ap-southeast-2:
       AMI: ami-0aa8b7a8042811ddf
     ca-central-1:
-      AMI: ami-0d50dee936e241e7e
+      AMI: ami-014b53fb2043417a3
     eu-central-1:
       AMI: ami-03804565a6baf6d30
     eu-west-1:
@@ -57,7 +57,7 @@ Mappings:
     sa-east-1:
       AMI: ami-0078e33a9103e1e58
     us-east-1:
-      AMI: ami-0254e5972ebcd132c
+      AMI: ami-0796380bc6e51157f
     us-east-2:
       AMI: ami-0a0d2004b44b9287c
     us-gov-west-1:
