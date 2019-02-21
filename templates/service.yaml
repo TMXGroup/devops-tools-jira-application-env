@@ -103,7 +103,7 @@ Resources:
           PortMappings:
             - 
               ContainerPort: 8080
-              hostPort: 8080
+              HostPort: 8080
           LogConfiguration:
             LogDriver: awslogs
             Options:
