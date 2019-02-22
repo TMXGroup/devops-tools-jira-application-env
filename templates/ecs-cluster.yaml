@@ -81,6 +81,8 @@ Resources:
               Service: ec2.amazonaws.com
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
+        - arn:aws:iam::aws:policy/AmazonSSMFullAccess
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
 
   InstanceProfile:
     Type: AWS::IAM::InstanceProfile
@@ -111,9 +113,9 @@ Resources:
     Properties:
       VPCZoneIdentifier: !Ref Subnets
       LaunchConfigurationName: !Ref LaunchConfiguration
-      MinSize: !Ref ClusterSize
+      MinSize: 1
       MaxSize: !Ref ClusterSize
-      DesiredCapacity: !Ref ClusterSize
+      DesiredCapacity: 1
       Tags: 
         - Key: Name
           Value: !Sub ${AWS::StackName} - ECS Host
@@ -162,6 +164,7 @@ Resources:
                   - /etc/cfn/hooks.d/cfn-auto-reloader.conf
     Properties:
       ImageId: !FindInMap [ AWSRegionToAMI, !Ref "AWS::Region", AMI ]
+      KeyName: Hank-personal-key
       InstanceType: !Ref InstanceType
       IamInstanceProfile: !Ref InstanceProfile
       SecurityGroups:
