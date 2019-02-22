@@ -74,11 +74,11 @@ Resources:
       Protocol: HTTP
       Matcher:
         HttpCode: 200-299
-      HealthCheckIntervalSeconds: 10
+      HealthCheckIntervalSeconds: 300
       HealthCheckPath: /
       HealthCheckPort: 8080
       HealthCheckProtocol: HTTP
-      HealthCheckTimeoutSeconds: 5
+      HealthCheckTimeoutSeconds: 120
       HealthyThresholdCount: 2
       TargetType: !If [ EC2, "instance", "ip" ]
       TargetGroupAttributes:
