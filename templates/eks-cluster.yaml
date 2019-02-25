@@ -1,0 +1,77 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: Kubernetts cluster with associated InstanceProfile, AutoScalingGroup, LaunchConfiguration and SecurityGroup  
+
+Parameters:
+
+  InstanceType:
+    Type: String
+    Default: t2.micro
+
+  ClusterSize:
+    Type: Number
+    Default: 2
+
+  Subnets:
+    Type: List<AWS::EC2::Subnet::Id>
+
+  SourceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup::Id
+
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+
+
+  # ClusterVersion:
+    # Description: Cluster Version
+    # Type: String
+    # Default: "1.11"
+
+    
+Resources:
+  EKSCluster:
+    Type: "AWS::EKS::Cluster"
+    Properties:
+      Name: !Ref AWS::StackName
+      ResourcesVpcConfig:
+        SecurityGroupIds: 
+          - !Ref SecurityGroup
+        SubnetIds: !Ref Subnets
+      RoleArn: !GetAtt EksServiceRole.Arn
+      
+
+  SecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: !Sub ${AWS::StackName}-hosts Cluster communication with worker nodes
+      SecurityGroupIngress:
+        - SourceSecurityGroupId: !Ref SourceSecurityGroup
+          IpProtocol: -1
+      VpcId: !Ref VpcId
+
+      
+     
+  EksServiceRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "eks.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+        - arn:aws:iam::aws:policy/AmazonEKSServicePolicy
+        - arn:aws:iam::aws:policy/AmazonSSMFullAccess
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM        
+      RoleName: !Sub "EksSvcRole-${AWS::StackName}"
+
+Outputs:
+  ClusterName:
+      Value: !Ref EKSCluster
